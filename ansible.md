@@ -44,7 +44,7 @@ Ansible 2.0 has deprecated the “ssh” from:
 `ansible_ssh_user`, `ansible_ssh_host`, and `ansible_ssh_port` to become 
 `ansible_user`, `ansible_host`, and `ansible_port`. 
 
-Host connection:
+Host connection.
 
 |:-----:|:-----:|
 |ansible_connection|Connection type to the host. This can be the name of any of ansible’s connection plugins. SSH protocol types are smart, ssh or paramiko. The default is smart. Non-SSH based types are described in the next section.|
@@ -60,7 +60,7 @@ Host connection:
 |ansible_ssh_pipelining|Determines whether or not to use SSH pipelining. This can override the pipelining setting in `ansible.cfg`.|
 |:=:|:=:|
 
-Privilege escalation (see Ansible Privilege Escalation for further details):
+Privilege escalation (see Ansible Privilege Escalation for further details).
 
 |:-----:|:-----:|
 |ansible_become|Equivalent to ansible_sudo or ansible_su, allows to force privilege escalation|
