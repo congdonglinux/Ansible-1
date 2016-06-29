@@ -45,6 +45,7 @@ Ansible 2.0 has deprecated the “ssh” from:
 `ansible_user`, `ansible_host`, and `ansible_port`. 
 
 Host connection:
+
 |:-----:|:-----:|
 |ansible_connection|Connection type to the host. This can be the name of any of ansible’s connection plugins. SSH protocol types are smart, ssh or paramiko. The default is smart. Non-SSH based types are described in the next section.|
 |ansible_host|The name of the host to connect to, if different from the alias you wish to give to it.|
@@ -60,6 +61,7 @@ Host connection:
 |:=:|:=:|
 
 Privilege escalation (see Ansible Privilege Escalation for further details):
+
 |:-----:|:-----:|
 |ansible_become|Equivalent to ansible_sudo or ansible_su, allows to force privilege escalation|
 |ansible_become_method|Allows to set privilege escalation method|
@@ -68,6 +70,7 @@ Privilege escalation (see Ansible Privilege Escalation for further details):
 |:=:|:=:|
 
 Remote host environment parameters:
+
 |:-----:|:-----:|
 |ansible_shell_type|The shell type of the target system. You should not use this setting unless you have set the ansible_shell_executable to a non-Bourne (sh) compatible shell. By default commands are formatted using sh-style syntax. Setting this to csh or fish will cause commands executed on target systems to follow those shell’s syntax instead.|
 |ansible_python_interpreter|The target host python path. This is useful for systems with more than one Python or not located at /usr/bin/python such as *BSD, or where /usr/bin/python is not a 2.X series Python. We do not use the /usr/bin/env mechanism as that requires the remote user’s path to be set right and also assumes the python executable is named python, where the executable might be named something like python2.6.|
@@ -75,6 +78,7 @@ Remote host environment parameters:
 |:=:|:=:|
 
  New in version 2.1.
+ 
 |:-----:|:-----:|
 |ansible_shell_executable|This sets the shell the ansible controller will use on the target machine, overrides executable in ansible.cfg which defaults to /bin/sh. You should really only change it if is not possible to use /bin/sh (i.e. /bin/sh is not installed on the target machine or cannot be run from sudo.).|
 |:=:|:=:|
