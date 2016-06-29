@@ -58,21 +58,13 @@ Ansible 2.0 has deprecated the “ssh” from:
 |ansible_scp_extra_args|This setting is always appended to the default scp command line.|
 |ansible_ssh_extra_args|This setting is always appended to the default ssh command line.|
 |ansible_ssh_pipelining|Determines whether or not to use SSH pipelining. This can override the pipelining setting in `ansible.cfg`.|
-
-
-|:-----:|:-----:|
 |ansible_become|Equivalent to ansible_sudo or ansible_su, allows to force privilege escalation|
 |ansible_become_method|Allows to set privilege escalation method|
 |ansible_become_user|Equivalent to `ansible_sudo_user` or `ansible_su_user`, allows to set the user you become through privilege escalation|
 |ansible_become_pass|Equivalent to `ansible_sudo_pass` or `ansible_su_pass`, allows you to set the privilege escalation password|
-
-|:-----:|:-----:|
 |ansible_shell_type|The shell type of the target system. You should not use this setting unless you have set the ansible_shell_executable to a non-Bourne (sh) compatible shell. By default commands are formatted using sh-style syntax. Setting this to csh or fish will cause commands executed on target systems to follow those shell’s syntax instead.|
 |ansible_python_interpreter|The target host python path. This is useful for systems with more than one Python or not located at /usr/bin/python such as *BSD, or where /usr/bin/python is not a 2.X series Python. We do not use the /usr/bin/env mechanism as that requires the remote user’s path to be set right and also assumes the python executable is named python, where the executable might be named something like python2.6.|
 |ansible_*_interpreter|Works for anything such as ruby or perl and works just like ansible_python_interpreter. This replaces shebang of modules which will run on that host.|
-
-
-|:-----:|:-----:|
 |ansible_shell_executable|This sets the shell the ansible controller will use on the target machine, overrides executable in ansible.cfg which defaults to /bin/sh. You should really only change it if is not possible to use /bin/sh (i.e. /bin/sh is not installed on the target machine or cannot be run from sudo.).|
 
 
