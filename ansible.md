@@ -44,7 +44,6 @@ Ansible 2.0 has deprecated the “ssh” from:
 `ansible_ssh_user`, `ansible_ssh_host`, and `ansible_ssh_port` to become 
 `ansible_user`, `ansible_host`, and `ansible_port`. 
 
-- Host connection:
 | Test | Test |
 |:-----:|:-----:|
 |ansible_connection|Connection type to the host. This can be the name of any of ansible’s connection plugins. SSH protocol types are smart, ssh or paramiko. The default is smart. Non-SSH based types are described in the next section.|
