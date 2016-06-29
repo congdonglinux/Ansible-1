@@ -44,8 +44,7 @@ Ansible 2.0 has deprecated the “ssh” from:
 `ansible_ssh_user`, `ansible_ssh_host`, and `ansible_ssh_port` to become 
 `ansible_user`, `ansible_host`, and `ansible_port`. 
 
-#####Host connection:
-
+Host connection:
 
 |:-----:|:-----:|
 |ansible_connection|Connection type to the host. This can be the name of any of ansible’s connection plugins. SSH protocol types are smart, ssh or paramiko. The default is smart. Non-SSH based types are described in the next section.|
@@ -61,8 +60,7 @@ Ansible 2.0 has deprecated the “ssh” from:
 |ansible_ssh_pipelining|Determines whether or not to use SSH pipelining. This can override the pipelining setting in `ansible.cfg`.|
 
 
-####Privilege escalation (see Ansible Privilege Escalation for further details):
-
+Privilege escalation (see Ansible Privilege Escalation for further details):
 
 |:-----:|:-----:|
 |ansible_become|Equivalent to ansible_sudo or ansible_su, allows to force privilege escalation|
@@ -70,8 +68,7 @@ Ansible 2.0 has deprecated the “ssh” from:
 |ansible_become_user|Equivalent to `ansible_sudo_user` or `ansible_su_user`, allows to set the user you become through privilege escalation|
 |ansible_become_pass|Equivalent to `ansible_sudo_pass` or `ansible_su_pass`, allows you to set the privilege escalation password|
 
-####Remote host environment parameters:
-
+Remote host environment parameters:
 
 |:-----:|:-----:|
 |ansible_shell_type|The shell type of the target system. You should not use this setting unless you have set the ansible_shell_executable to a non-Bourne (sh) compatible shell. By default commands are formatted using sh-style syntax. Setting this to csh or fish will cause commands executed on target systems to follow those shell’s syntax instead.|
@@ -79,7 +76,7 @@ Ansible 2.0 has deprecated the “ssh” from:
 |ansible_*_interpreter|Works for anything such as ruby or perl and works just like ansible_python_interpreter. This replaces shebang of modules which will run on that host.|
 
 
-- New in version 2.1.
+ New in version 2.1.
 |:-----:|:-----:|
 |ansible_shell_executable|This sets the shell the ansible controller will use on the target machine, overrides executable in ansible.cfg which defaults to /bin/sh. You should really only change it if is not possible to use /bin/sh (i.e. /bin/sh is not installed on the target machine or cannot be run from sudo.).|
 
