@@ -24,7 +24,7 @@
   - name: CREATE DATABASE WordPress
     mysql_db: name=wordpress state=present
   - name: CREATE USER FOR DATABASE WordPress
-    mysql_user: name=wordpress password=wordpress priv=wordpress.*:ALL state=present
+    mysql_user: name=wordpress password=wordpress priv=wordpress.*:ALL
   - name: DOWNLOAD WordPress
     get_url:
       url=https://wordpress.org/latest.tar.gz
