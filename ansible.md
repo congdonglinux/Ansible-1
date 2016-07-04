@@ -11,11 +11,19 @@ Lợi ích của configuration management:
   - Linh hoạt, mềm dẻo trong quản lý.
 
 Hạn chế
-  - Mặc dù rất tốt nhưng CM không phải là vạn năng. Nếu không phải triển khai 1 hệ thống đủ lớn, hoặc chỉ phải thực hiện trên 1, 2 server thì thực sự không cần thiết dùng đến CM. Viết ra kịch bản có khi tiêu tốn nhiều thời gian hơn việc bạn thực hiện nó bằng lệnh.
+  - Nếu không phải triển khai 1 hệ thống đủ lớn, hoặc chỉ phải thực hiện trên 1, 2 server thì thực sự không cần thiết dùng đến CM. Viết ra kịch bản có khi tiêu tốn nhiều thời gian hơn việc bạn thực hiện nó bằng lệnh.
 
   - Trong những tình huống như hệ thống gặp sự cố hay troubleshooting thì CM không có nhiều tác dụng. Đó là những tình huống cần sự cẩn thận, tránh những sai sót không đáng có.
 
-Ansible đang là công cụ Configuration Management khá nổi bật hiện nay.  
+Ansible đang là công cụ Configuration Management khá nổi bật hiện nay.
+
+Ansible là một công cụ tự động hóa CNTT. Nó có thể cấu hình hệ thống, triển khai phần mềm, và dàn xếp các nhiệm vụ CNTT tiên tiến hơn như triển khai liên tục hoặc không cập nhật thời gian chết.
+
+Ansible là phi tập trung - nó dựa trên các thông tin hệ điều hành hiện tại của bạn để kiểm soát quyền truy cập vào các máy từ xa; nếu cần thiết nó có thể dễ dàng kết nối với Kerberos, LDAP, và các hệ thống quản lý chứng thực tập trung khác.
+
+module Ansible là nguồn lực được phân phối cho các nút từ xa để làm cho họ thực hiện các nhiệm vụ cụ thể hoặc phù hợp với một trạng thái đặc biệt. Ansible sau một "kèm theo pin" triết lý, vì vậy bạn có rất nhiều module tuyệt vời cho tất cả các cách thức của nhiệm vụ CNTT trong việc phân phối lõi. Điều này có nghĩa là mô-đun cũng up-to-date và bạn không cần phải săn cho thực hiện điều đó sẽ làm việc trên nền tảng của bạn. Bạn có thể nghĩ của thư viện module như một hộp công cụ đầy đủ các công cụ quản lý hệ thống hữu ích, và playbooks như các hướng dẫn để xây dựng một cái gì đó sử dụng những công cụ này.
+
+
   - Là công cụ mã nguồn mở dùng để quản lý cài đặt, cấu hình hệ thống một cách tập trung và cho phép thực thi câu lệnh điều khiển.
   - Sử dụng SSH (hoặc Powershell) và các module được viết bằng ngôn ngữ Python để điểu khiển hệ thống.
   - Sử dụng định dạng JSON để hiển thị thông tin và sử dụng YAML (Yet Another Markup Language) để xây dựng cấu trúc mô tả hệ thống.
@@ -25,7 +33,7 @@ Ansible đang là công cụ Configuration Management khá nổi bật hiện na
 Đặc điểm của Ansible
   - Không cần cài đặt phần mềm lên các agent, chỉ cần cài đặt tại master.
   - Không service, daemon, chỉ thực thi khi được gọi
-  - Bảo mật cao ( do sử dụng giao thức SSH để kết nối )
+  - Bảo mật cao (do sử dụng giao thức SSH để kết nối)
   - Cú pháp dễ đọc, dễ học, dễ hiểu
 
 Yêu cầu cài đặt
@@ -33,6 +41,16 @@ Yêu cầu cài đặt
   - Thư viện Jinja2: dùng để xây dựng template cấu hình
   - Thư viện PyYAML: hỗ trợ cấu trúc YAML
   - Python 2.4 trở lên
+
+  Ansible works by connecting to your nodes and pushing out small programs, called "Ansible Modules" to them. These programs are written to be resource models of the desired state of the system. Ansible then executes these modules (over SSH by default), and removes them when finished.
+
+  Your library of modules can reside on any machine, and there are no servers, daemons, or databases required. Typically you'll work with your favorite terminal program, a text editor, and probably a version control system to keep track of changes to your content.
+
+  SSH KEYS ARE YOUR FRIENDS
+
+  Passwords are supported, but SSH keys with ssh-agent are one of the best ways to use Ansible.  Though if you want to use Kerberos, that's good too.  Lots of options! Root logins are not required, you can login as any user, and then su or sudo to any user.
+
+  Ansible's "authorized_key" module is a great way to use ansible to control what machines can access what hosts. Other options, like kerberos or identity management systems, can also be used.
 
 #3. Cài đặt
 ##3.1 trên Controller
@@ -140,11 +158,59 @@ Trong đó:
 ansible.cfg in the current working directory, .ansible.cfg in the home directory or /etc/ansible/ansible.cfg, whichever it finds first
 - Nội dung mặc định của file ansible.cfg: https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
 - Một số thiết lập trong thẻ [defaults]:
-  - action_plugins:
+
+| Tên | Ý nghĩa|
+|:---:|:------:|
+|action_plugins| Actions are pieces of code in ansible that enable things like module execution, templating, and so forth.`action_plugins = ~/.ansible/plugins/action_plugins/:/usr/share/ansible_plugins/action_plugins`|
+|ansible_managed| Ansible-managed is a string that can be inserted into files written by Ansible’s config templating system, if you use a string like: `{{ ansible_managed }}`|
+|ask_pass| This controls whether an Ansible playbook should prompt for a password by default. The default behavior is no: `ask_pass=True`|
+|ask_sudo_pass|Similar to ask_pass, this controls whether an Ansible playbook should prompt for a sudo password by default when sudoing. The default behavior is also no: `ask_sudo_pass=True`|
+|ask_vault_pass|This controls whether an Ansible playbook should prompt for the vault password by default. The default behavior is no:`ask_vault_pass=True`|
+|inventory|This is the default location of the inventory file, script, or directory that Ansible will use to determine what hosts it has available to talk to: `inventory = /etc/ansible/hosts`|
+|library|This is the default location Ansible looks to find modules:`library = /usr/share/ansible`|
+|local_tmp|When Ansible gets ready to send a module to a remote machine it usually has to add a few things to the module: Some boilerplate code, the module’s parameters, and a few constants from the config file. This combination of things gets stored in a temporary file until ansible exits and cleans up after itself. The default location is a subdirectory of the user’s home directory. If you’d like to change that, you can do so by altering this setting:`local_tmp = $HOME/.ansible/tmp`|
+|log_path|If present and configured in ansible.cfg, Ansible will log information about executions at the designated location. Be sure the user running Ansible has permissions on the logfile:`log_path=/var/log/ansible.log`|
+|private_key_file|If you are using a pem file to authenticate with machines rather than SSH agent or passwords, you can set the default value here to avoid re-specifying `--private-key` with every invocation:`private_key_file=/path/to/file.pem`|
+|remote_port|This sets the default SSH port on all of your systems, for systems that didn’t specify an alternative value in inventory. The default is the standard 22:`remote_port = 22`|
+|remote_tmp|Ansible works by transferring modules to your remote machines, running them, and then cleaning up after itself. In some cases, you may not wish to use the default location and would like to change the path. You can do so by altering this setting:`remote_tmp = $HOME/.ansible/tmp`|
+|remote_user|This is the default username ansible will connect as for /usr/bin/ansible-playbook. Note that /usr/bin/ansible will always default to the current user if this is not defined:`remote_user = root`|
+|timeout|This is the default SSH timeout to use on connection attempts:`timeout = 10`|
+|sudo_exe|If using an alternative sudo implementation on remote machines, the path to sudo can be replaced here provided the sudo implementation is matching CLI flags with the standard sudo:`sudo_exe=sudo`|
+|sudo_user|This is the default user to sudo to if --sudo-user is not specified or ‘sudo_user’ is not specified in an Ansible playbook. The default is the most logical: ‘root’:`sudo_user=root`|
+|become|The equivalent of adding sudo: or su: to a play or task, set to true/yes to activate privilege escalation. The default behavior is no:`become=True`|
+|become_user|The equivalent to ansible_sudo_user or ansible_su_user, allows to set the user you become through privilege escalation. The default is ‘root’:`become_user=root`|
+|become_ask_pass| Ask for privilege escalation password, the default is False:`become_ask_pass=True`|
 
 - Các thiết lập khác thao khảo tại đây: http://docs.ansible.com/ansible/intro_configuration.html
 
 
-##5. Module
+#5. Module
+- Modules (also referred to as “task plugins” or “library plugins”) are the ones that do the actual work in ansible, they are what gets executed in each playbook task. But you can also run a single one using the ‘ansible’ command.
 
-##6. Playbooks.
+- Documentation for each module can be accessed from the command line with the ansible-doc tool:
+```sh
+ansible-doc yum
+```
+- A list of all installed modules is also available:
+```sh
+ansible-doc -l
+```
+- All modules technically return JSON format data, though if you are using the command line or playbooks, you don’t really need to know much about that. If you’re writing your own module, you care, and this means you do not have to write modules in any particular language – you get to choose.
+
+- Core Modules: These are modules that the core ansible team maintains and will always ship with ansible itself. They will also receive slightly higher priority for all requests than those in the “extras” repos.
+- Extras Modules: These modules are currently shipped with Ansible, but might be shipped separately in the future. They are also mostly maintained by the community. Non-core modules are still fully usable, but may receive slightly lower response rates for issues and pull requests.
+
+
+
+#6. Playbooks.
+Playbooks là cấu hình, triển khai, và ngôn ngữ Ansible. Họ có thể mô tả một chính sách mà bạn muốn hệ thống của bạn từ xa để thực thi, hoặc một bộ các bước trong một quá trình CNTT nói chung.
+
+
+##Tài liệu tham khảo
+https://www.ansible.com/how-ansible-works
+
+http://docs.ansible.com/ansible/intro.html
+
+http://blog.vccloud.vn/configuration-management/
+
+http://www.tecmint.com/install-and-configure-ansible-automation-tool-in-linux/
