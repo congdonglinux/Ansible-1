@@ -8,7 +8,7 @@
       - mysql-server
       - python-mysqldb
   - name: CREATE DATABASE WordPress
-    mysql_db: name=wordpress state=present
+    mysql_db: name=wordpress
   - name: CREATE USER FOR DATABASE WordPress
     mysql_user: name=wordpress password=wordpress priv=wordpress.*:ALL host=10.10.10.220
   - name: CONFIG MYSQL For Remote DB

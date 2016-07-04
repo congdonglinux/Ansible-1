@@ -22,7 +22,7 @@
   - name: RESTART mariadb-server
     service: name=mariadb state=restarted
   - name: CREATE DATABASE WordPress
-    mysql_db: name=wordpress state=present
+    mysql_db: name=wordpress
   - name: CREATE USER FOR DATABASE WordPress
     mysql_user: name=wordpress password=wordpress priv=wordpress.*:ALL
   - name: DOWNLOAD WordPress
