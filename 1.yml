@@ -36,7 +36,7 @@
       dest=/var/www/
       copy=no
   - name: COPY FILE CONFIG Wordpress
-    command: mv /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php creates=/var/www/wordpress/wp-config.php
+    command: mv /var/www/wordpress/wp-config-sample.php /var/www/wordpress/wp-config.php
   - name: FILE CONFIG Wordpress
     lineinfile:
       dest=/var/www/wordpress/wp-config.php
