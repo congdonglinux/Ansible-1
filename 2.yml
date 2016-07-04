@@ -3,7 +3,7 @@
   sudo: yes
   tasks:
   - name: INSTALL MYSQL
-    apt: name={{item}} update_cache=yes state=present
+    apt: name={{item}} update_cache=yes
     with_items:
       - mysql-server
       - python-mysqldb
@@ -23,14 +23,14 @@
   sudo: yes
   tasks:
   - name: INSTALL APACHE2
-    apt: name=apache2 update_cache=yes state=present
+    apt: name=apache2 update_cache=yes
   - name: CONFIG VIRTUAL HOST WordPress
     lineinfile:
       dest=/etc/apache2/sites-available/000-default.conf
       regexp="DocumentRoot /var/www/html"
       line="DocumentRoot /var/www/wordpress"
   - name: INSTALL PHP5
-    apt: name={{item}} update_cache=yes state=present
+    apt: name={{item}} update_cache=yes
     with_items:
       - php5
       - libapache2-mod-php5

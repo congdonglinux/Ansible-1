@@ -3,19 +3,19 @@
   sudo: yes
   tasks:
   - name: INSTALL APACHE2
-    yum: name=httpd update_cache=yes state=present
+    yum: name=httpd update_cache=yes
   - name: CONFIG VIRTUAL HOST WordPress
     lineinfile:
       dest=/etc/httpd/conf/httpd.conf
       regexp='DocumentRoot "/var/www/html"'
       line='DocumentRoot "/var/www/wordpress"'
   - name: INSTALL PHP5
-    yum: name={{item}} update_cache=yes state=present
+    yum: name={{item}} update_cache=yes
     with_items:
       - php
       - php-mysqlnd
   - name: INSTALL MYSQL
-    yum: name={{item}} update_cache=yes state=present
+    yum: name={{item}} update_cache=yes
     with_items:
       - mariadb-server
       - MySQL-python
