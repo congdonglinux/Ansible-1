@@ -42,15 +42,15 @@ Yêu cầu cài đặt
   - Thư viện PyYAML: hỗ trợ cấu trúc YAML
   - Python 2.4 trở lên
 
-  Ansible works by connecting to your nodes and pushing out small programs, called "Ansible Modules" to them. These programs are written to be resource models of the desired state of the system. Ansible then executes these modules (over SSH by default), and removes them when finished.
+Ansible works by connecting to your nodes and pushing out small programs, called "Ansible Modules" to them. These programs are written to be resource models of the desired state of the system. Ansible then executes these modules (over SSH by default), and removes them when finished.
 
-  Your library of modules can reside on any machine, and there are no servers, daemons, or databases required. Typically you'll work with your favorite terminal program, a text editor, and probably a version control system to keep track of changes to your content.
+Your library of modules can reside on any machine, and there are no servers, daemons, or databases required. Typically you'll work with your favorite terminal program, a text editor, and probably a version control system to keep track of changes to your content.
 
-  SSH KEYS ARE YOUR FRIENDS
+SSH KEYS ARE YOUR FRIENDS
 
-  Passwords are supported, but SSH keys with ssh-agent are one of the best ways to use Ansible.  Though if you want to use Kerberos, that's good too.  Lots of options! Root logins are not required, you can login as any user, and then su or sudo to any user.
+Passwords are supported, but SSH keys with ssh-agent are one of the best ways to use Ansible.  Though if you want to use Kerberos, that's good too.  Lots of options! Root logins are not required, you can login as any user, and then su or sudo to any user.
 
-  Ansible's "authorized_key" module is a great way to use ansible to control what machines can access what hosts. Other options, like kerberos or identity management systems, can also be used.
+Ansible's "authorized_key" module is a great way to use ansible to control what machines can access what hosts. Other options, like kerberos or identity management systems, can also be used.
 
 #3. Cài đặt
 ##3.1 trên Controller
@@ -201,10 +201,163 @@ ansible-doc -l
 - Extras Modules: These modules are currently shipped with Ansible, but might be shipped separately in the future. They are also mostly maintained by the community. Non-core modules are still fully usable, but may receive slightly lower response rates for issues and pull requests.
 
 
+#6. Ad-Hoc Commands
+- An ad-hoc command is something that you might type in to do something really quick, but don’t want to save for later.
+##6.1 Shell Commands
+The command - Executes a command on a remote node module does not support shell variables and things like piping. If we want to execute a module using a shell, use the ‘shell’ module instead. Read more about the differences on the About Modules page.
+```sh
+$ ansible raleigh -m shell -a 'echo $TERM'
+```
 
-#6. Playbooks.
-Playbooks là cấu hình, triển khai, và ngôn ngữ Ansible. Họ có thể mô tả một chính sách mà bạn muốn hệ thống của bạn từ xa để thực thi, hoặc một bộ các bước trong một quá trình CNTT nói chung.
+##6.2 File Transfer
+- To transfer a file directly to many servers:
+```sh
+$ ansible atlanta -m copy -a "src=/etc/hosts dest=/tmp/hosts"
+```
 
+- The file module allows changing ownership and permissions on files. These same options can be passed directly to the copy module as well:
+```sh
+$ ansible webservers -m file -a "dest=/srv/foo/a.txt mode=600"
+$ ansible webservers -m file -a "dest=/srv/foo/b.txt mode=600 owner=mdehaan group=mdehaan"
+```
+##6.3 Managing Packages
+- Ensure a package is installed, but don’t update it:
+```sh
+$ ansible webservers -m yum -a "name=acme state=present"
+```
+
+- Ensure a package is installed to a specific version:
+```sh
+$ ansible webservers -m yum -a "name=acme-1.5 state=present"
+```
+
+- Ensure a package is at the latest version:
+```sh
+$ ansible webservers -m yum -a "name=acme state=latest"
+```
+
+- Ensure a package is not installed:
+```sh
+$ ansible webservers -m yum -a "name=acme state=absent"
+```
+
+##6.4 Users and Groups
+The ‘user’ module allows easy creation and manipulation of existing user accounts, as well as removal of user accounts that may exist:
+```sh
+$ ansible all -m user -a "name=foo password=<crypted password here>"
+
+$ ansible all -m user -a "name=foo state=absent"
+```
+
+##6.5 Deploying From Source Control
+Deploy your webapp straight from git:
+```sh
+$ ansible webservers -m git -a "repo=git://foo.example.org/repo.git dest=/srv/myapp version=HEAD"
+```
+
+##6.6 Managing Services
+- Ensure a service is started on all webservers:
+```sh
+$ ansible webservers -m service -a "name=httpd state=started"
+```
+
+- Alternatively, restart a service on all webservers:
+```sh
+$ ansible webservers -m service -a "name=httpd state=restarted"
+```
+
+- Ensure a service is stopped:
+```sh
+$ ansible webservers -m service -a "name=httpd state=stopped"
+```
+
+#7. Playbooks.
+Simply put, playbooks are the basis for a really simple configuration management and multi-machine deployment system, unlike any that already exist, and one that is very well suited to deploying complex applications.
+- Playbooks được viết dưới dạng YAML format
+- Có thể có nhiều play trong một playbook
+- Mục tiêu của play là để ánh xạ một nhóm các máy chủ với một số vai trò được xác định rõ, thể hiện thông qua các cuộc gọi ansible đến tasks.
+- Ví dụ:
+```sh
+---
+- hosts: webservers
+  vars:
+    http_port: 80
+    max_clients: 200
+  tasks:
+  - name: ensure apache is at the latest version
+    yum: pkg=httpd state=latest
+  - name: write the apache config file
+    template: src=/srv/httpd.j2 dest=/etc/httpd.conf
+    notify:
+    - restart apache
+  - name: ensure apache is running (and enable it at boot)
+    service: name=httpd state=started enabled=yes
+  handlers:
+    - name: restart apache
+      service: name=httpd state=restarted
+```
+
+Trong đó:
+  - `hosts:` xác định đối tượng sẽ thực thi playbook này.
+  - `vars:` các biến dùn trong play, trong ví dụ này các biến sẽ được dùng để cấu hình apache
+  - `tasks:` liệt kê các task cần thực hiện
+  - `name:` tên của task
+  - `yum`: template, service: các module sử dụng
+  - `notify:` giống như trigger, để gọi đến 1 task khác khi task hiện tại thực hiện thành công.
+  - `handlers:` khai báo các task notify
+
+- Chạy playbook:
+```sh
+$ ansible-playbook webserver.yml
+```
+
+- Cấu trúc 1 playbooks chuẩn
+```sh
+production                # inventory file for production servers  
+stage                     # inventory file for stage environment
+
+group_vars/  
+   group1                 # here we assign variables to particular groups
+   group2                 # ""
+host_vars/  
+   hostname1              # if systems need specific variables, put them here
+   hostname2              # ""
+
+library/                  # if any custom modules, put them here (optional)  
+filter_plugins/           # if any custom filter plugins, put them here (optional)
+
+site.yml                  # master playbook  
+webservers.yml            # playbook for webserver tier  
+dbservers.yml             # playbook for dbserver tier
+
+roles/  
+    common/               # this hierarchy represents a "role"
+        tasks/            #
+            main.yml      #  <-- tasks file can include smaller files if warranted
+        handlers/         #
+            main.yml      #  <-- handlers file
+        templates/        #  <-- files for use with the template resource
+            ntp.conf.j2   #  <------- templates end in .j2
+        files/            #
+            bar.txt       #  <-- files for use with the copy resource
+            foo.sh        #  <-- script files for use with the script resource
+        vars/             #
+            main.yml      #  <-- variables associated with this role
+        defaults/         #
+            main.yml      #  <-- default lower priority variables for this role
+        meta/             #
+            main.yml      #  <-- role dependencies
+
+    webtier/              # same kind of structure as "common" was above, done for the webtier role
+    monitoring/           # ""
+    fooapp/               # ""
+```
+
+Trong đó:
+  - `production:` giống file /etc/ansible/hosts, liệt kê group, host
+  - `group_vars/*:` đặt các biến chung cho cùng 1 nhóm, ví dụ [webservers] có biến listen_port: 80
+  - `host_vars/*:` đặt các biến riêng cho từng host
+  - `roles/*:` đặt các role, ví dụ các host trong [webservers] gọi đến role webtier
 
 ##Tài liệu tham khảo
 https://www.ansible.com/how-ansible-works
