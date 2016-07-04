@@ -7,7 +7,7 @@
   - name: CONFIG VIRTUAL HOST WordPress
     lineinfile:
       dest=/etc/apache2/sites-available/000-default.conf
-      regexp="(.)+DocumentRoot /var/www/html"
+      regexp="DocumentRoot /var/www/html"
       line="DocumentRoot /var/www/wordpress"
   - name: INSTALL PHP5
     apt: name={{item}} update_cache=yes state=present
