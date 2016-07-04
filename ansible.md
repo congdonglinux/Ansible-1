@@ -1,29 +1,91 @@
 #ANSIBLE
-##1. Là gì?Dùng để làm gì?
-##2. Kiến trúc - Cách hoạt động.
-##3. Cài đặt
-###3.1 trên Controller
+#1. Là gì?Dùng để làm gì?
+Configuration management (CM) là công cụ thực hiện việc thay đổi trạng thái hiện tại của hệ thống sang trạng thái được xác định trước. Hay nói cách khác, là công cụ hỗ trợ, cấu hình, cài đặt hệ thống một cách tự động.
+
+Configuration management có rất nhiều công cụ như Ansible, Chef, Puppet, Saltstack ...
+
+Lợi ích của configuration management:
+  - Giúp thực hiện công việc triển khai hệ thống đơn giản và thuận tiện.
+  - Hạn chế những công đoạn lặp lại, tiết kiệm thời gian
+  - Có thể sử dụng lại cho những hệ thống tương tự.
+  - Linh hoạt, mềm dẻo trong quản lý.
+
+Hạn chế
+  - Mặc dù rất tốt nhưng CM không phải là vạn năng. Nếu không phải triển khai 1 hệ thống đủ lớn, hoặc chỉ phải thực hiện trên 1, 2 server thì thực sự không cần thiết dùng đến CM. Viết ra kịch bản có khi tiêu tốn nhiều thời gian hơn việc bạn thực hiện nó bằng lệnh.
+
+  - Trong những tình huống như hệ thống gặp sự cố hay troubleshooting thì CM không có nhiều tác dụng. Đó là những tình huống cần sự cẩn thận, tránh những sai sót không đáng có.
+
+Ansible đang là công cụ Configuration Management khá nổi bật hiện nay.  
+  - Là công cụ mã nguồn mở dùng để quản lý cài đặt, cấu hình hệ thống một cách tập trung và cho phép thực thi câu lệnh điều khiển.
+  - Sử dụng SSH (hoặc Powershell) và các module được viết bằng ngôn ngữ Python để điểu khiển hệ thống.
+  - Sử dụng định dạng JSON để hiển thị thông tin và sử dụng YAML (Yet Another Markup Language) để xây dựng cấu trúc mô tả hệ thống.
+
+#2. Kiến trúc - Cách hoạt động.
+
+Đặc điểm của Ansible
+  - Không cần cài đặt phần mềm lên các agent, chỉ cần cài đặt tại master.
+  - Không service, daemon, chỉ thực thi khi được gọi
+  - Bảo mật cao ( do sử dụng giao thức SSH để kết nối )
+  - Cú pháp dễ đọc, dễ học, dễ hiểu
+
+Yêu cầu cài đặt
+  - Hệ điều hành: Linux (Redhat, Debian, Ubuntu, Centos, ...), Windows
+  - Thư viện Jinja2: dùng để xây dựng template cấu hình
+  - Thư viện PyYAML: hỗ trợ cấu trúc YAML
+  - Python 2.4 trở lên
+
+#3. Cài đặt
+##3.1 trên Controller
+- Trên ubuntu
 ```sh
 $ sudo apt-get install software-properties-common
 $ sudo apt-add-repository ppa:ansible/ansible
 $ sudo apt-get update
 $ sudo apt-get install ansible
 ```
-
+- Trên centos
 ```sh
-# install the epel-release RPM if needed on CentOS, RHEL, or Scientific Linux
 $ sudo yum install ansible
 ```
-###3.2 Trên remote host.
-##4. Configuration file
-###4.1 Inventory: `/etc/ansible/hosts`
+
+- Tạo ssh key
+```sh
+ssh-keygen -t rsa -b 4096
+```
+- Copy file key sang hosts.
+```sh
+ssh-copy-id ansible@10.10.10.200
+```
+
+##3.2 Trên remote host.
+- Tạo tài khoản truy cập SSH.
+
+  Ta nên tạo một tài khoản khác phục vụ cho ansible.
+
+  Tạo tài khoản:
+```sh
+$ adduser ansible
+```
+
+- Cấu hình cho phép tài khoản ansible sử dụng sudo mà không cần mật khẩu.
+```sh
+$ /vi/etc/sudoers.d/ansible
+ansible ALL=(ALL) NOPASSWD:ALL
+```
+
+#4. Configuration file
+##4.1 Inventory: `/etc/ansible/hosts`
 - Ansible làm việc với nhiều hệ thống trong cùng một thời điểm. Các hệ thống này được cấu hình
 trong Ansible’s inventory file, Nơi lưu trữ mặc định là `/etc/ansible/hosts`
 
 - Chúng ta có thể sử dụng nhiều inventory file tại thời điểm và có thể đẩy inventory từ dynamic
 hoặc cloud sources, đây là Dynamic Inventory.
 
-- 
+- File iventory để giúp Ansible biết các server mà nó cần kết nối sử dụng SSH ,
+thông tin kết nối nó yêu cầu và các tùy chọn biến gắn liền với các server này.
+
+- File inventory có định dạng là INI. Trong file inventory, chúng ta có thể chỉ định nhiều hơn một máy chủ và gom chúng thành nhiều nhóm.
+
 ```sh
 [webservers]
 foo.example.com
@@ -35,17 +97,19 @@ two.example.com
 three.example.com
 ```
 
-Những điều trong ngoặc là tên nhóm, được sử dụng trong việc phân loại các hệ thống và 
-quyết định những gì hệ thống bạn đang kiểm soát và cho mục đích gì.
+Trong đó:
 
-####Inventory Parameters
-Note
-Ansible 2.0 has deprecated the “ssh” from:
-`ansible_ssh_user`, `ansible_ssh_host`, and `ansible_ssh_port` to become 
-`ansible_user`, `ansible_host`, and `ansible_port`. 
+- [webservers], [dbservers] là các group.
+- foo.example.com là các hostname của các host (có thể sử dụng địa chỉ ip của host).
 
+###4.1.1. Inventory Parameters
+- Là các tùy chọn đi kèm với các server, được cấu hình trong file inventory: `/etc/ansible/hosts`
 
-| Test | Test |
+- Note: Ansible 2.0 has deprecated the “ssh” from:
+`ansible_ssh_user`, `ansible_ssh_host`, and `ansible_ssh_port` to become
+`ansible_user`, `ansible_host`, and `ansible_port`.
+
+| Tên | Ý nghĩa |
 |:-----:|:-----:|
 |ansible_connection|Connection type to the host. This can be the name of any of ansible’s connection plugins. SSH protocol types are smart, ssh or paramiko. The default is smart. Non-SSH based types are described in the next section.|
 |ansible_host|The name of the host to connect to, if different from the alias you wish to give to it.|
@@ -67,19 +131,20 @@ Ansible 2.0 has deprecated the “ssh” from:
 |ansible_*_interpreter|Works for anything such as ruby or perl and works just like ansible_python_interpreter. This replaces shebang of modules which will run on that host.|
 |ansible_shell_executable|This sets the shell the ansible controller will use on the target machine, overrides executable in ansible.cfg which defaults to /bin/sh. You should really only change it if is not possible to use /bin/sh (i.e. /bin/sh is not installed on the target machine or cannot be run from sudo.).|
 
+###4.1.2 Iventory Dynamic
 
-###4.2
-```sh
-[defaults]
-hostfile = hosts
-remote_user = vagrant
-private_key_file = .vagrant/machines/default/virtualbox/private_key
-host_key_checking = False
-```
-Ansible uses `/etc/ansible/hosts` as the default location for the inventory file.
+
+
+##4.2 `ansible.cfg`
+
+ansible.cfg in the current working directory, .ansible.cfg in the home directory or /etc/ansible/ansible.cfg, whichever it finds first
+- Nội dung mặc định của file ansible.cfg: https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
+- Một số thiết lập trong thẻ [defaults]:
+  - action_plugins:
+
+- Các thiết lập khác thao khảo tại đây: http://docs.ansible.com/ansible/intro_configuration.html
 
 
 ##5. Module
 
 ##6. Playbooks.
-
