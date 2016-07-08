@@ -77,6 +77,18 @@
       command: ifdown virbr0
     - name: virbr0 UP
       command: ifup virbr0
+      ##br-ex
+    - name: br-ex DOWN
+      command: ifdown br-ex
+    - name: br-ex UP
+      command: ifup br-ex
+    - name: CREATE DIRECTORY IMAGES
+      file:
+        path=/var/www/webvirtmgr/images
+        owner=www-data
+        group=www-data
+        recurse=yes
+        state=directory
 ###
 - hosts: webvirt
   sudo: yes
@@ -102,7 +114,7 @@
         src=/home/adk/webvirtmgr.sqlite3
         dest=/var/www/webvirtmgr/webvirtmgr.sqlite3
     - name: COPY STATIC
-      copy:
+      synchronize:
         src=/home/adk/static
         dest=/var/www/webvirtmgr/
     - name: Setup nginx
@@ -121,6 +133,7 @@
         path=/var/www/webvirtmgr
         owner=www-data
         group=www-data
+        recurse=yes
     - name: Setup Supervisor
       get_url:
         url=https://raw.githubusercontent.com/retspen/webvirtmgr/master/conf/initd/webvirtmgr-console-ubuntu
@@ -144,5 +157,7 @@
       copy:
         src=/home/adk/webvirtmgr.conf
         dest=/etc/supervisor/conf.d/webvirtmgr.conf
+    - name: RESTART NGINX
+      service: name=nginx state=restarted
     - name: RESTART supervisor
       service: name=supervisor state=restarted
