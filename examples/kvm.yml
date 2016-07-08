@@ -1,0 +1,148 @@
+---
+- hosts: kvm
+  sudo: yes
+  tasks:
+    - name: INSTLL kvm
+      apt: name={{item}} update_cache=yes
+      with_items:
+        - qemu-kvm
+        - libvirt-bin
+        #- ubuntu-vm-builder
+        #- virt-manager
+        - bridge-utils
+    - name: add user to libvirt group
+      user: name=adk groups=libvirtd append=yes
+    - name: CONFIG libvirt
+      lineinfile:
+        dest=/etc/libvirt/libvirtd.conf
+        line="{{ item.line }}"
+      with_items:
+        - 'line': 'listen_tls = 0'
+        - 'line': 'listen_tcp = 1'
+        - 'line': 'listen_addr = "0.0.0.0"'
+        - 'line': 'auth_tcp = "none"'
+    - name: CONFIG libvirt-bin
+      lineinfile:
+        dest=/etc/default/libvirt-bin
+        regexp='libvirtd_opts="-d"'
+        line='libvirtd_opts="-l -d"'
+    - name: RESTART libvirt-bin
+      service: name=libvirt-bin state=restarted
+    #- name: INSTLL OPENVSWITCH
+    #  apt: name={{item}} update_cache=yes
+    #  with_items:
+    #    - openvswitch-switch
+    #    - openvswitch-datapath-dkms
+    #- name: ADD bridge br-ex
+    #  command: ovs-vsctl add-br br-ex
+    #- name: add-br br-ex
+    #  command: ovs-vsctl add-port br-ex eth0
+    - name: CONFIG INTERFACES
+      lineinfile:
+        dest=/etc/network/interfaces
+        regexp="{{ item.regexp }}"
+        line="{{ item.line }}"
+      with_items:
+        - {'regexp': "auto eth0", 'line': "#auto eth0"}
+        - {'regexp': "iface eth0 inet dhcp", 'line': "#iface eth0 inet dhcp"}
+    - name: CONFIG INTERFACES
+      lineinfile:
+        dest=/etc/network/interfaces
+        line="{{ item.line }}"
+      with_items:
+        - 'line': '#interface br-ex'
+        - 'line': 'auto br-ex'
+        - 'line': 'iface br-ex inet static'
+        - 'line': 'address 172.16.69.136/24'
+        - 'line': 'gateway 172.16.69.2'
+        - 'line': 'dns-nameservers 8.8.8.8'
+        - 'line': 'bridge_ports eth0'
+        - 'line': 'bridge_fd 9'
+        - 'line': 'bridge_hello 2'
+        - 'line': 'bridge_maxage 12'
+        - 'line': 'bridge_stp off'
+        - 'line': '#interface eth0'
+        - 'line': 'auto eth0'
+        - 'line': 'iface eth0 inet manual'
+        - 'line': 'up ip link set dev $IFACE up'
+        - 'line': 'down ip link set dev $IFACE down'
+    - name: RESTART NETWORKING
+      service: name=networking state=restarted
+    - name: eth0 DOWN
+      command: ifdown eth0
+    - name: eth0 UP
+      command: ifup eth0
+      ##virbr0
+    - name: virbr0 DOWN
+      command: ifdown virbr0
+    - name: virbr0 UP
+      command: ifup virbr0
+###
+- hosts: webvirt
+  sudo: yes
+  tasks:
+    - name: INSTALL WEBVIRT
+      apt: name={{item}} state=present update_cache=yes
+      with_items:
+        - python-pip
+        - python-libvirt
+        - python-libxml2
+        - novnc
+        - supervisor
+        - nginx
+        - git
+    - name: DOWNLOAD WEBVIRT
+      git:
+        repo=git://github.com/retspen/webvirtmgr.git
+        dest=/var/www/webvirtmgr
+    - name: INSTLL PIP
+      command: pip install -r /var/www/webvirtmgr/requirements.txt
+    - name: COPY DATABASE
+      copy:
+        src=/home/adk/webvirtmgr.sqlite3
+        dest=/var/www/webvirtmgr/webvirtmgr.sqlite3
+    - name: COPY STATIC
+      copy:
+        src=/home/adk/static
+        dest=/var/www/webvirtmgr/
+    - name: Setup nginx
+      copy:
+        src=/home/adk/webvirtmgr
+        dest=/etc/nginx/sites-available/webvirtmgr
+    - name: Setup Nginx2
+      file:
+        src=/etc/nginx/sites-available/webvirtmgr
+        dest=/etc/nginx/sites-enabled/webvirtmgr
+        state=link
+    - name: Setup Nginx 3
+      file: path=/etc/nginx/sites-enabled/default state=absent
+    - name: Setup Nginx 4
+      file:
+        path=/var/www/webvirtmgr
+        owner=www-data
+        group=www-data
+    - name: Setup Supervisor
+      get_url:
+        url=https://raw.githubusercontent.com/retspen/webvirtmgr/master/conf/initd/webvirtmgr-console-ubuntu
+        dest=/etc/init.d/
+        validate_certs=no
+    - name: RENAME
+      command: mv /etc/init.d/webvirtmgr-console-ubuntu /etc/init.d/novnc
+    - name: CHMOD
+      file:
+        path=/etc/init.d/novnc
+        mode="u+x,g+x,o+x"
+    - name: NOVNC STOP
+      service: name=novnc state=stopped
+    - name: INSSERV
+      command: /usr/lib/insserv/insserv -r novnc
+    - name: COPY novnc
+      copy:
+        src=/home/adk/novnc
+        dest=/etc/insserv/overrides/novnc
+    - name: COPY supervisor
+      copy:
+        src=/home/adk/webvirtmgr.conf
+        dest=/etc/supervisor/conf.d/webvirtmgr.conf
+    - name: RESTART supervisor
+      service: name=supervisor state=restarted

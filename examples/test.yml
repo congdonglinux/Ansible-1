@@ -1,0 +1,18 @@
+---
+- hosts: webvirt
+  sudo: yes
+  tasks:
+    - name: xoa file
+      file:
+        path=/home/adk/test.txt
+        state=absent
+    - name: phan quyen thu muc
+      file:
+        path=/var/www/webvirtmgr
+        owner=www-data
+        group=www-data
+    - name: chmod
+      file:
+        path=/etc/init.d/novnc
+        mode="u+x,g+x,o+x"
+...
