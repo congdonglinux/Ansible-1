@@ -5,27 +5,27 @@ AUTO INSTALL PHPIPAM with ANSIBLE
 phpipam/
 ├── group_vars
 |   └── all
-├──roles
-|  ├── apache2
-|  |   ├── handlers
-|  |   |   └── main.yaml
-|  |   └── tasks
-|  |       └── main.yaml
-|  ├── mysql-server
-|  |   ├── handlers
-|  |   |   └── main.yaml
-|  |   └── tasks
-|  |   |   └── main.yaml
-|  ├── php
-|  |   ├── handlers
-|  |   |   └── main.yaml
-|  |   └── tasks
-|  |   |   └── main.yaml
-|  ├── phpipam
-|  |   ├── tasks
-|  |   |   └── main.yaml
-|  |   └── templates
-|  |   |   └── config.php
+├── roles
+|   ├── apache2
+|   |   ├── handlers
+|   |   |   └── main.yaml
+|   |   └── tasks
+|   |       └── main.yaml
+|   ├── mysql-server
+|   |   ├── handlers
+|   |   |   └── main.yaml
+|   |   └── tasks
+|   |   |   └── main.yaml
+|   ├── php
+|   |   ├── handlers
+|   |   |   └── main.yaml
+|   |   └── tasks
+|   |   |   └── main.yaml
+|   ├── phpipam
+|   |   ├── tasks
+|   |   |   └── main.yaml
+|   |   └── templates
+|   |   |   └── config.php
 | main.yaml
 ```
 
