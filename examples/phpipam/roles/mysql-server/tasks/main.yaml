@@ -1,6 +1,8 @@
 ---
 - name: INSTALL MYSQL SERVER
   apt: name=mysql-server update_cache=yes
-- name: CREATE USER MYSQL
-  mysql_user: name={{ ipam_db_user }} password={{ ipam_db_password }} priv=*.*:ALL
+#- name: CREATE USER MYSQL
+#  mysql_user: name={{ ipam_db_user }} password={{ ipam_db_password }} priv=*.*:ALL
+- name: CHANGE password mysql
+  shell: mysql mysql -e 'UPDATE user SET password = PASSWORD("{{ mysql_root_password }}") WHERE User = "root";'
   notify: restart mysql-server

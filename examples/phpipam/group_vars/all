@@ -5,6 +5,7 @@ ipam_db_user: phpipam
 ipam_db_password: phpipam
 ipam_db_name: phpipam
 ipam_db_port: 3306
+mysql_root_password: votinhkhoc
 
 #BASE directive
 ipam_base: /phpipam/
