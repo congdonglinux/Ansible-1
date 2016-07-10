@@ -1,6 +1,7 @@
 #PHPIPAM with ANSIBLE
 AUTO INSTALL PHPIPAM with ANSIBLE
 #1. Playbooks
+```sh
 phpipam/
 ├── group_vars
 |   └── all
@@ -26,6 +27,7 @@ phpipam/
 |  |   |   └── templates
 |  |   |   |   └── config.php
 | main.yaml
+```
 
 #2. How to config
 ##2.1 Config hosts: `vi phpipam/main.yaml`
