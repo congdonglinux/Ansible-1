@@ -1,4 +1,6 @@
 ---
 - name: INSTALL APACHE2
   apt: name=apache2 update_cache=yes
+- name: ENABLE MOD REWRITE APACHE2
+  command: a2enmod rewrite
   notify: restart apache2
