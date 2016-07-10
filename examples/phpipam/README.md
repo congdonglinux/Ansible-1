@@ -21,11 +21,11 @@ phpipam/
 |  |   |   └── main.yaml
 |  |   └── tasks
 |  |   |   └── main.yaml
-|  |   ├── phpipam
-|  |   |   ├── tasks
-|  |   |   |   └── main.yaml
-|  |   |   └── templates
-|  |   |   |   └── config.php
+|  ├── phpipam
+|  |   ├── tasks
+|  |   |   └── main.yaml
+|  |   └── templates
+|  |   |   └── config.php
 | main.yaml
 ```
 
