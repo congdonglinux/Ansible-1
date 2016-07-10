@@ -1,0 +1,11 @@
+---
+#database
+ipam_db_host: localhost
+ipam_db_user: phpipam
+ipam_db_password: phpipam
+ipam_db_name: phpipam
+ipam_db_port: 3306
+
+#BASE directive
+ipam_base: /phpipam/
+...

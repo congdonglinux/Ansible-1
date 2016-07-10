@@ -1,0 +1,13 @@
+---
+- name: INSTALL PHP5
+  apt: name={{ item }} update_cache=yes
+  with_items:
+    - php5
+    - php5-cgi
+    - libapache2-mod-php5
+    - php5-common
+    - php-pear
+    - php5-gmp
+    - php5-ldap
+    - php5-cli
+  notify: restart apache2

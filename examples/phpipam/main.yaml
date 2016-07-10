@@ -1,0 +1,9 @@
+---
+  - name: INSTALL PHPIPAM
+    hosts: phpipam
+    sudo: yes
+    roles:
+      - apache2
+      - mysql-server
+      - php
+      - phpipam

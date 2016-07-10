@@ -2,7 +2,7 @@
 - hosts: kvm
   sudo: yes
   tasks:
-    - name: INSTLL kvm
+    - name: INSTALL kvm
       apt: name={{item}} update_cache=yes
       with_items:
         - qemu-kvm

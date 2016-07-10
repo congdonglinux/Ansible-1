@@ -1,0 +1,21 @@
+---
+- name: DOWNLOAD PHPIPAM
+  get_url:
+    url=http://heanet.dl.sourceforge.net/project/phpipam/phpipam-1.2.1.tar
+    dest=/tmp
+    validate_certs=no
+- name: EXTRACT PHPIPAM
+  unarchive:
+    src=/tmp/phpipam-1.2.1.tar
+    dest=/var/www/html
+    copy=no
+- name: COPY PHPIPAM CONFIG
+  template:
+    src=config.php
+    dest=/var/www/html/phpipam
+- name: Change ownership of PHPIPAM installation
+  file:
+    path=/var/www/html/phpipam
+    owner=www-data
+    group=www-data
+    recurse=yes
