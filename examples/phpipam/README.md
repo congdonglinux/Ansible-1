@@ -50,6 +50,8 @@ ipam_base: /phpipam/
 
 #3. How to run
 ```sh
-cd phpipam
+apt-get install git
+git clone https://github.com/lethanhlinh247/Ansible.git
+cd Ansible/examples/phpipam/
 ansible-playbook main.yaml
 ```

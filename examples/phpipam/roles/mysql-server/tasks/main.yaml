@@ -2,5 +2,5 @@
 - name: INSTALL MYSQL SERVER
   apt: name=mysql-server update_cache=yes
 - name: CREATE USER MYSQL
-  mysql_user: name={{ ipam_db_user }} password={{ ipam_db_password }} priv={{ ipam_db_name }}.*:ALL
+  mysql_user: name={{ ipam_db_user }} password={{ ipam_db_password }} priv=*.*:ALL
   notify: restart mysql-server
