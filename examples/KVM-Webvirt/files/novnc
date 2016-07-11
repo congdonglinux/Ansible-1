@@ -1,0 +1,10 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          nova-novncproxy
+# Required-Start:    $network $local_fs $remote_fs $syslog
+# Required-Stop:     $remote_fs
+# Default-Start:     
+# Default-Stop:      
+# Short-Description: Nova NoVNC proxy
+# Description:       Nova NoVNC proxy
+### END INIT INFO
