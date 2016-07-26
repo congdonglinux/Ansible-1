@@ -14,7 +14,7 @@
 - [7. Playbooks.](#playbooks)
 - [Tài liệu tham khảo](#thamkhao)
 
-<a href="khainiem"></a>
+<a name="khainiem"></a>
 #1. Là gì?Dùng để làm gì?
 Configuration management (CM) là công cụ thực hiện việc thay đổi trạng thái hiện tại của hệ thống sang trạng thái được xác định trước. Hay nói cách khác, là công cụ hỗ trợ, cấu hình, cài đặt hệ thống một cách tự động.
 
@@ -44,7 +44,7 @@ module Ansible là nguồn lực được phân phối cho các nút từ xa đ�
   - Sử dụng SSH (hoặc Powershell) và các module được viết bằng ngôn ngữ Python để điểu khiển hệ thống.
   - Sử dụng định dạng JSON để hiển thị thông tin và sử dụng YAML (Yet Another Markup Language) để xây dựng cấu trúc mô tả hệ thống.
 
-<a href="kientruc"></a>
+<a name="kientruc"></a>
 #2. Kiến trúc - Cách hoạt động.
 
 Đặc điểm của Ansible
@@ -69,10 +69,10 @@ Passwords are supported, but SSH keys with ssh-agent are one of the best ways to
 
 Ansible's "authorized_key" module is a great way to use ansible to control what machines can access what hosts. Other options, like kerberos or identity management systems, can also be used.
 
-<a href="caidat"></a>
+<a name="caidat"></a>
 #3. Cài đặt
 
-<a href="controller"></a>
+<a name="controller"></a>
 ##3.1 trên Controller
 - Trên ubuntu
 ```sh
@@ -95,7 +95,7 @@ ssh-keygen -t rsa -b 4096
 ssh-copy-id ansible@10.10.10.200
 ```
 
-<a href="remotehost"></a>
+<a name="remotehost"></a>
 ##3.2 Trên remote host.
 - Tạo tài khoản truy cập SSH.
 
@@ -112,10 +112,10 @@ $ /vi/etc/sudoers.d/ansible
 ansible ALL=(ALL) NOPASSWD:ALL
 ```
 
-<a href="configfile"></a>
+<a name="configfile"></a>
 #4. Configuration file
 
-<a href="hosts"></a>
+<a name="hosts"></a>
 ##4.1 Inventory: `/etc/ansible/hosts`
 - Ansible làm việc với nhiều hệ thống trong cùng một thời điểm. Các hệ thống này được cấu hình
 trong Ansible’s inventory file, Nơi lưu trữ mặc định là `/etc/ansible/hosts`
@@ -176,7 +176,7 @@ Trong đó:
 ###4.1.2 Iventory Dynamic
 
 
-<a href="ansible"></a>
+<a name="ansible"></a>
 ##4.2 `ansible.cfg`
 
 ansible.cfg in the current working directory, .ansible.cfg in the home directory or /etc/ansible/ansible.cfg, whichever it finds first
@@ -207,7 +207,7 @@ ansible.cfg in the current working directory, .ansible.cfg in the home directory
 
 - Các thiết lập khác thao khảo tại đây: http://docs.ansible.com/ansible/intro_configuration.html
 
-<a href="module"></a>
+<a name="module"></a>
 #5. Module
 - Modules (also referred to as “task plugins” or “library plugins”) are the ones that do the actual work in ansible, they are what gets executed in each playbook task. But you can also run a single one using the ‘ansible’ command.
 
@@ -224,7 +224,7 @@ ansible-doc -l
 - Core Modules: These are modules that the core ansible team maintains and will always ship with ansible itself. They will also receive slightly higher priority for all requests than those in the “extras” repos.
 - Extras Modules: These modules are currently shipped with Ansible, but might be shipped separately in the future. They are also mostly maintained by the community. Non-core modules are still fully usable, but may receive slightly lower response rates for issues and pull requests.
 
-<a href="commands"></a>
+<a name="commands"></a>
 #6. Ad-Hoc Commands
 - An ad-hoc command is something that you might type in to do something really quick, but don’t want to save for later.
 ##6.1 Shell Commands
@@ -295,7 +295,7 @@ $ ansible webservers -m service -a "name=httpd state=restarted"
 $ ansible webservers -m service -a "name=httpd state=stopped"
 ```
 
-<a href="playbooks"></a>
+<a name="playbooks"></a>
 #7. Playbooks.
 Simply put, playbooks are the basis for a really simple configuration management and multi-machine deployment system, unlike any that already exist, and one that is very well suited to deploying complex applications.
 - Playbooks được viết dưới dạng YAML format
@@ -384,7 +384,7 @@ Trong đó:
   - `host_vars/*:` đặt các biến riêng cho từng host
   - `roles/*:` đặt các role, ví dụ các host trong [webservers] gọi đến role webtier
 
-<a href="thamkhao"></a>
+<a name="thamkhao"></a>
 #Tài liệu tham khảo
 https://www.ansible.com/how-ansible-works
 
